@@ -1,8 +1,8 @@
 {
   "database": {
-    "port": "13149",
-    "ip": "49.233.172.175"
+    "port": "27017",
+    "ip": "localhost"
   },
-  "port": "82",
-  "process": true
+  "port": "80",
+  "process": false
 }

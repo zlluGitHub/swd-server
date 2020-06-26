@@ -70,16 +70,6 @@ fs.readFile(path.resolve(__dirname, "./config.json"), 'utf8', function (err, dat
     let config = JSON.parse(data);
     // 连接数据库
     const mongoose = require('mongoose');
-    //mongodb://user:password@wry520.cn:27017/SimpleDesign
-    // mongoose.connect("mongodb://10.0.82.131:27017/SimpleDesign", { useNewUrlParser: true }, err => {
-    // mongoose.connect("mongodb://10.0.86.17:27017/SimpleDesign", {
-    //   useNewUrlParser: true,
-    //   // useUnifiedTopology: true     //这个即是报的警告
-    // }, err => {
-    // mongoose.connect("mongodb://10.0.88.46:27017/SimpleDesign", { useNewUrlParser: true}, err => {
-    // mongoose.connect("mongodb://10.0.86.17:27017/SimpleDesign", { useNewUrlParser: true}, err => {
-    // mongoose.connect("mongodb://localhost:27017/SimpleDesign", { useNewUrlParser: true }, err => {
-    // mongoose.connect("mongodb://localhost:13149/SimpleDesign", { useNewUrlParser: true }, err => {
     mongoose.connect(`mongodb://${config.database.ip}:${config.database.port}/SimpleDesign`, { useNewUrlParser: true, useUnifiedTopology: true }, err => {
       if (err) {
         console.log('Connection Error:' + err);
