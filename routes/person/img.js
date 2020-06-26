@@ -5,7 +5,7 @@ const fs = require("fs");
 const multer = require("multer");
 
 // 图片存储路径
-let url = './static/assets/img/person/';
+let url = './public/images/';
 //设置文件存储路径 upload文件如果不存在则会自己创建一个。
 let upload = multer({ dest: url }).single('file');
 router.post('/', upload, (req, res, next) => {
@@ -23,7 +23,7 @@ router.post('/', upload, (req, res, next) => {
     // fileInfo.mimetype = file.mimetype;
     fileInfo.name = fileName;
     fileInfo.size = file.size;
-    fileInfo.path = 'assets/img/person/' + fileName;
+    fileInfo.path = 'images/' + fileName;
     res.json({ result: true, code: 200, fileInfo , message: "文件上传成功！"});
   }
 });

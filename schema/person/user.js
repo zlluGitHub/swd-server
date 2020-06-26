@@ -33,7 +33,7 @@ let userSchema = new Schema({
     },
     url: { //头像地址
         type: String,
-        default: "/assets/img/dt.png"
+        default: "/images/dt.png"
     },
     sex: {  //性别
         type: String,

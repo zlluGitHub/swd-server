@@ -11,19 +11,16 @@ let history = require('connect-history-api-fallback');
 // app.use(history({ verbose: true, index: '/index.html'}));
 app.use(history());
 
-// 引入json解析中间件
-// 解决上传内容太多失败
+// 引入json解析中间件 解决上传内容太多失败
 let bodyParser = require('body-parser');
 app.use(bodyParser.json({ limit: '50mb' }));
 app.use(bodyParser.urlencoded({ limit: '50mb', extended: true }));
 
-// app.use(express.json({limit: '500mb'}));
-// path.join(__dirname, 'public') 表示工程路径后面追加 public
 app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
-app.use(express.static(path.join(__dirname, 'static')));
+app.use(express.static(path.join(__dirname, 'public')));
 app.use(express.static(path.join(__dirname, 'www')));
 app.use(express.static(path.join(__dirname, 'web')));
 
@@ -37,23 +34,9 @@ app.all('*', function (req, res, next) {
   next();
 });
 
-// view engine setup
-// app.set('views', path.join(__dirname, 'views'));
-// app.set('view engine', 'jade');
-
 // 路由引入
-app.use('/api/template/chart', require('./routes/template/chart'));
-app.use('/api/template/chart/img', require('./routes/template/img'));
-
-app.use('/api/template/component', require('./routes/component/index'));
-app.use('/api/template/component/img', require('./routes/component/img'));
-
 app.use('/api/person/user', require('./routes/person/user'));
 app.use('/api/person/img', require('./routes/person/img'));
-
-app.use('/api/chart/theme', require('./routes/theme/theme'));
-app.use('/api/task', require('./routes/task/task'));
-app.use('/api/task/files', require('./routes/task/files'));
 
 app.use('/api/deploy/files', require('./routes/deploy/files'));
 app.use('/api/deploy/edition', require('./routes/deploy/edition'));
@@ -63,19 +46,8 @@ app.use('/api/deploy/port', require('./routes/deploy/port'));
 
 app.use('/api/service/operation', require('./routes/service/operation'));
 
-app.use('/api/project/handle', require('./routes/project/handle'));
-app.use('/api/project/tool', require('./routes/project/tool'));
-app.use('/api/project/img', require('./routes/project/img'));
-app.use('/api/project/feedback', require('./routes/project/feedback'));
-
 // 第三方登录
 app.use('/api/person/oauth', require('./routes/person/oauth'));
-
-// app.use('/users', usersRouter);
-// app.use('/upload', uploadRouter);
-// app.use('/journal', journalRouter);
-// app.use('/words', wordsRouter);
-// app.use('/chart', chFileRouter);
 
 app.use(function (req, res, next) {
   next(createError(404));

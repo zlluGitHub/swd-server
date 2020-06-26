@@ -274,7 +274,7 @@ router.post('/delete', (req, res, next) => {
     let body = req.body;
     if (body.vi == '1') {
         delDir('./backups/' + body.root);//删除文件夹
-        component.deleteMany({ projectName: body.projectName }, (err, data) => {
+        component.deleteMany({ key: body.key }, (err, data) => {
             if (err) {
                 console.log('错误信息：', err);
                 res.json({ result: false, code: 500 });
