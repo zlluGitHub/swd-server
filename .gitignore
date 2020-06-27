@@ -2,7 +2,6 @@
 *node_modules
 /backups/*
 /www/*
-*views
 
 # local env files
 .env.local
