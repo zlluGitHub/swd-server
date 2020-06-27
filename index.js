@@ -11,10 +11,15 @@ let history = require('connect-history-api-fallback');
 // app.use(history({ verbose: true, index: '/index.html'}));
 app.use(history());
 
+// 启用 gzip
+let compression = require('compression')
+app.use(compression());
+
 // 引入json解析中间件 解决上传内容太多失败
 let bodyParser = require('body-parser');
 app.use(bodyParser.json({ limit: '50mb' }));
 app.use(bodyParser.urlencoded({ limit: '50mb', extended: true }));
+
 
 app.use(logger('dev'));
 app.use(express.json());
