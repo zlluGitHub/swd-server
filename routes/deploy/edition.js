@@ -123,7 +123,6 @@ router.get('/get', (req, res, next) => {
     });
 });
 
-
 //添加
 router.post('/add', (req, res, next) => {
     let body = req.body;
@@ -225,6 +224,7 @@ router.post('/transfer', (req, res, next) => {
     }
 
     // if (body.root && body.version && body.catalog && body.bid) {
+
     //     //更新数据
     //     function backCall() {
     //         component.updateOne({ bid: body.bid }, { $set: { idDeployment: 'yes' } }, (err, result) => {

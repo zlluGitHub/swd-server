@@ -81,7 +81,16 @@ fs.readFile(path.resolve(__dirname, "./config.json"), 'utf8', function (err, dat
       } else {
         console.log('数据库连接成功!');
       }
-    })
+    });
+    //创建文件夹
+    let wwwDir = './www';
+    if (!fs.existsSync(wwwDir)) {
+      fs.mkdirSync(wwwDir);
+    }
+    let backupsDir = './backups';
+    if (!fs.existsSync(backupsDir)) {
+      fs.mkdirSync(backupsDir);
+    }
   } else {
     console.log(err);
   }
