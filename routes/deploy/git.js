@@ -37,9 +37,13 @@ const router = express.Router();
 //     res.json({ result: false, code: 500,req:req.query });
 // })
 router.post('/', (req, res, next) => {
-    let resBody = req.body;
+    let resBody = req.body; //Gitea
+    let secret = req.get('X-Gitlab-Token'); //gitlab
+    if (secret) {
+        resBody.secret = secret
+    }
     if (req.query.key) {
-        resBody.secret = req.query.key
+        resBody.secret = req.query.key; //github
     }
     if (resBody.secret) {
         // 获取当前服务配置
@@ -64,7 +68,6 @@ router.post('/', (req, res, next) => {
         //  var executer = config[repositoryUrl]
         //  console.log('executer: ', executer)
 
-
         // let payload = JSON.stringify(req.body);
 
         // console.log(aseDecode(payload, 'fdf395172fee8b95d03b07facfda307dadc9')); // 输出  我不是笨蛋
@@ -73,8 +76,6 @@ router.post('/', (req, res, next) => {
         // const iv = Buffer.from('FnJL7EDzjqWjcaY9', 'utf8');
         // const src=deSign('764a669609b0c9b041faeec0d572fd7a', key, iv);
         // console.log(src); // hello world
-
-
 
         // console.log(resBody);
         // console.log(resBody.secret);
