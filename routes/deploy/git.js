@@ -249,6 +249,7 @@ router.post('/', (req, res, next) => {
                     uid: objData.bid,
                     key: objData.key,
                     port: objData.port,
+                    target: objData.target,
                     portState: objData.portState,
                     authorId: objData.authorId,
                     catalog: objData.catalog,
