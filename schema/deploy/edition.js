@@ -26,6 +26,10 @@ let editionSchema = new Schema({
         type: String,
         default: ""
     },
+    target: { //代理接口
+        type: String,
+        default: ""
+    },
     key: { //秘钥key
         type: String,
         default: ""

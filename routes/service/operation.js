@@ -6,7 +6,7 @@ const debug = require('debug')('express-nodejs:server');
 // const tools = require("../../public/javascripts/tools");
 const component = require("../../schema/deploy/edition");
 // const user = require("../../schema/person/user");
-
+const proxy = require("http-proxy-middleware");
 
 //开机自启所有端口
 component.find({}, (err, data) => {
@@ -70,8 +70,24 @@ function isOpenPort(data) {
     //开启端口回调
     let msgArr = []
     for (let index = 0; index < data.length; index++) {
+        let app = express();
+        // 解决跨域代理
+        let pathRewrite = {}
+        pathRewrite['/' + data[index].root] = "/";
+        if (data[index].target) {
+            app.use(`/${data[index].root}/**`,
+                proxy.createProxyMiddleware({
+                    // 代理目标地址
+                    target: data[index].target,
+                    changeOrigin: true,
+                    // 地址重写
+                    pathRewrite
+                })
+            );
+        }
+
         if (data[index].port) {
-            let app = express();
+
             app.use(express.static('./www' + data[index].webUrl));
             let server = app.listen(data[index].port);
             let port = normalizePort(data[index].port);
@@ -137,6 +153,7 @@ function isOpenPort(data) {
                         throw error;
                 }
             });
+
             server.on('listening', function () {
                 let addr = server.address();
                 let bind = typeof addr === 'string'
