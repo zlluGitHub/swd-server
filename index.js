@@ -7,9 +7,9 @@ const logger = require('morgan');
 const app = express();
 
 //解决刷新页面后 页面404
-let history = require('connect-history-api-fallback');
-// app.use(history({ verbose: true, index: '/index.html'}));
-app.use(history());
+// let history = require('connect-history-api-fallback');
+// // app.use(history({ verbose: true, index: '/index.html'}));
+// app.use(history());
 
 // 启用 gzip
 let compression = require('compression')
@@ -47,7 +47,6 @@ app.use('/api/deploy/files', require('./routes/deploy/files'));
 app.use('/api/deploy/edition', require('./routes/deploy/edition'));
 app.use('/api/deploy/auto', require('./routes/deploy/autoEdition'));
 app.use('/api/deploy/git', require('./routes/deploy/git'));
-app.use('/api/deploy/port', require('./routes/deploy/port'));
 
 app.use('/api/service/operation', require('./routes/service/operation'));
 

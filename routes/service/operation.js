@@ -5,6 +5,8 @@ const debug = require('debug')('express-nodejs:server');
 // const path = require("path");
 // const tools = require("../../public/javascripts/tools");
 const component = require("../../schema/deploy/edition");
+// const exec = require('child_process').exec;
+const net = require('net')
 // const user = require("../../schema/person/user");
 const proxy = require("http-proxy-middleware");
 
@@ -68,7 +70,7 @@ router.post('/open', (req, res, next) => {
 // 开启端口回调
 function isOpenPort(data) {
     //开启端口回调
-    let msgArr = []
+    // let msgArr = []
     for (let index = 0; index < data.length; index++) {
         let app = express();
         // 解决跨域代理
@@ -87,7 +89,6 @@ function isOpenPort(data) {
         }
 
         if (data[index].port) {
-
             app.use(express.static('./www' + data[index].webUrl));
             let server = app.listen(data[index].port);
             let port = normalizePort(data[index].port);
@@ -112,44 +113,15 @@ function isOpenPort(data) {
                     case 'EACCES':
                         console.error(bind + ' requires elevated privileges');
                         // process.exit(1);
-                        msgArr.push({ port, msg: 'requires elevated privileges' })
-                        // 更新状态
-                        // component.updateMany({ bid: data[index].bid }, { $set: { portState: '0' } }, (err, result) => {
-                        //     if (err) {
-                        //         // res.json({ result: false, code: 500 });
-                        //         console.log(data[index].port + '端口数据更新失败！，错误信息：', err);
-                        //     } else {
-                        //         console.log(data[index].port + '端口数据更新成功！');
-                        //         // res.json({ result: true, code: 200 });
-                        //     };
-                        // });
+                        // msgArr.push({ port, msg: 'requires elevated privileges' })
                         break;
                     case 'EADDRINUSE':
                         console.error(bind + ' is already in use');
+                        // server.close() // 关闭服务
                         // process.exit(1); //结束进程
-                        msgArr.push({ port, msg: bind + ' is already in use' })
-                        // 更新状态
-                        // component.updateMany({ bid: data[index].bid }, { $set: { portState: '1' } }, (err, result) => {
-                        //     if (err) {
-                        //         // res.json({ result: false, code: 500 });
-                        //         console.log(data[index].port + '端口数据更新失败！，错误信息：', err);
-                        //     } else {
-                        //         console.log(data[index].port + '端口数据更新成功！');
-                        //         // res.json({ result: true, code: 200 });
-                        //     };
-                        // });
+                        // msgArr.push({ port, msg: bind + ' is already in use' })
                         break;
                     default:
-                        // 更新状态
-                        // component.updateMany({ bid: data[index].bid }, { $set: { portState: '0' } }, (err, result) => {
-                        //     if (err) {
-                        //         // res.json({ result: false, code: 500 });
-                        //         console.log(data[index].port + '端口数据更新失败！，错误信息：', err);
-                        //     } else {
-                        //         console.log(data[index].port + '端口数据更新成功！');
-                        //         // res.json({ result: true, code: 200 });
-                        //     };
-                        // });
                         throw error;
                 }
             });
@@ -159,24 +131,41 @@ function isOpenPort(data) {
                 let bind = typeof addr === 'string'
                     ? 'pipe ' + addr
                     : 'port ' + addr.port;
-                msgArr.push({ port, msg: '端口开启成功，可直接访问：http://localhost:' + bind })
-                // 更新状态
-                // component.updateMany({ bid: data[index].bid }, { $set: { portState: '1' } }, (err, result) => {
-                //     if (err) {
-                //         // res.json({ result: false, code: 500 });
-                //         console.log(data[index].port + '端口数据更新失败！，错误信息：', err);
-                //     } else {
-                //         console.log(data[index].port + '端口数据更新成功！');
-                //         // res.json({ result: true, code: 200 });
-                //     };
-                // });
+                // msgArr.push({ port, msg: '端口开启成功，可直接访问：http://localhost:' + bind })
                 console.log('请访问：localhost:' + bind);
                 debug('请访问：localhost:' + bind);
             });
         }
     }
-    return msgArr
+    // return msgArr
 }
+// 检测端口是否被占用
+router.post('/test', (req, res, next) => {
+    let port = req.body.port * 1;
+
+    // 创建服务并监听该端口
+    if (isNubmer(port)) {
+        console.log(port);
+        let server = net.createServer().listen(port)
+        server.on('listening', function () { // 执行这块代码说明端口未被占用
+            server.close() // 关闭服务
+            console.log('The port【' + port + '】 is available.') // 控制台输出信息
+            res.json({ result: true, code: 200, state: 1 });
+        })
+
+        server.on('error', function (err) {
+            if (err.code === 'EADDRINUSE') { // 端口已经被使用
+                console.log('The port【' + port + '】 is occupied, please change other port.')
+                res.json({ result: true, code: 500, state: 0 });
+            } else {
+                res.json({ result: true, code: 200, state: -1 });
+            }
+        })
+    } else {
+        res.json({ result: false, code: 200, state: -2 });
+    }
+});
+
 
 function isNubmer(nubmer) {
     var re = /^[0-9]+.?[0-9]*/;//判断字符串是否为数字//判断正整数/[1−9]+[0−9]∗]∗/ 
