@@ -7,9 +7,9 @@ const logger = require('morgan');
 const app = express();
 
 //解决刷新页面后 页面404
-// let history = require('connect-history-api-fallback');
-// // app.use(history({ verbose: true, index: '/index.html'}));
-// app.use(history());
+let history = require('connect-history-api-fallback');
+// app.use(history({ verbose: true, index: '/index.html'}));
+app.use(history());
 
 // 启用 gzip
 let compression = require('compression')
