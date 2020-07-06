@@ -41,6 +41,14 @@ router.get('/get', (req, res, next) => {
                     }
                 })
             }
+
+
+            if (query.key) {
+                data = data.filter(item => {
+                    return item.key == query.key
+                })
+            }
+
             let versionData = null
             if (data.length > 0) {
                 versionData = data[data.length - 1]
@@ -51,11 +59,6 @@ router.get('/get', (req, res, next) => {
             if (query.bid) {
                 data = data.filter(item => {
                     return item.bid == query.bid
-                })
-            }
-            if (query.key) {
-                data = data.filter(item => {
-                    return item.key == query.key
                 })
             }
 
@@ -84,8 +87,10 @@ router.get('/get', (req, res, next) => {
                     return item.idDeployment == query.idDeployment
                 })
             }
+
             //数据分页处理
             data = tools.setPage(data, pageNo, pageSize);
+            // console.log(data);
 
             user.find({}, (err, userArr) => {
                 if (err) {
@@ -93,7 +98,6 @@ router.get('/get', (req, res, next) => {
                     res.json({ result: false, code: 500 });
                     return;
                 } else {
-                    // console.log(userArr);
                     data.list = data.list.map(item => {
                         for (let index = 0; index < userArr.length; index++) {
                             if (userArr[index].bid === item.authorId) {
@@ -161,7 +165,6 @@ router.post('/add', (req, res, next) => {
         } else {
             if (!body.key) {
                 body.key = tools.getUid(); //秘钥key
-                console.log(body.key);
             }
             component.create(body, (err, data) => {
                 if (err) {

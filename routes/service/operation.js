@@ -145,7 +145,6 @@ router.post('/test', (req, res, next) => {
 
     // 创建服务并监听该端口
     if (isNubmer(port)) {
-        console.log(port);
         let server = net.createServer().listen(port)
         server.on('listening', function () { // 执行这块代码说明端口未被占用
             server.close() // 关闭服务

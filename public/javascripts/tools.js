@@ -58,6 +58,12 @@ function checkImgType(ths) {
  * 分页查询  
  */
 function setPage(list, pageNo, pageSize, sort) {
+    if (list.length === 0) {
+        return {
+            list: [],
+            total: 0
+        };
+    }
     pageNo = pageNo * 1 === 0 ? 1 : pageNo * 1;
     pageSize = pageSize * 1;
     let start = null, end = null;
@@ -76,7 +82,7 @@ function setPage(list, pageNo, pageSize, sort) {
             total: list.length
         };
     } else {
-       
+
         return {
             list: list,
             total: list.length
