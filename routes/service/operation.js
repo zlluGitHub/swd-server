@@ -14,7 +14,10 @@ const proxy = require("http-proxy-middleware");
 component.find({}, (err, data) => {
     if (err) {
         console.log('错误信息：', err);
-        res.json({ result: false, code: 500 });
+        res.json({
+            result: false,
+            code: 500
+        });
     } else {
         if (data.length !== 0) {
             let obj = {};
@@ -30,22 +33,36 @@ component.find({}, (err, data) => {
 
 //开启端口
 router.post('/open', (req, res, next) => {
-    let body = req.body ? req.body : { port: 'text' }
+    let body = req.body ? req.body : {
+        port: 'text'
+    }
     if (body.port === 'all') {
         component.find({}, (err, data) => {
             if (err) {
                 console.log('错误信息：', err);
-                res.json({ result: false, code: 500 });
+                res.json({
+                    result: false,
+                    code: 500
+                });
             } else {
                 isOpenPort(data);
-                res.json({ msg: ' 端口开启成功！', result: true });
+                res.json({
+                    msg: ' 端口开启成功！',
+                    result: true
+                });
             }
         })
     } else if (isNubmer(body.port * 1)) {
         isOpenPort([body]);
-        res.json({ msg: body.port + '端口开启成功！', result: true });
+        res.json({
+            msg: body.port + '端口开启成功！',
+            result: true
+        });
     } else {
-        res.json({ msg: '端口开启失败，请输入正确端口！', result: false });
+        res.json({
+            msg: '端口开启失败，请输入正确端口！',
+            result: false
+        });
     }
 });
 
@@ -76,7 +93,7 @@ function isOpenPort(data) {
         // 解决跨域代理
         let pathRewrite = {}
         pathRewrite['/' + data[index].root] = "/";
-        if (data[index].target) {
+        if (data[index].idDeployment === 'yes' && data[index].target) {
             app.use(`/${data[index].root}/**`,
                 proxy.createProxyMiddleware({
                     // 代理目标地址
@@ -88,7 +105,7 @@ function isOpenPort(data) {
             );
         }
 
-        if (data[index].port) {
+        if (data[index].idDeployment === 'yes' && data[index].port) {
             app.use(express.static('./www' + data[index].webUrl));
             let server = app.listen(data[index].port);
             let port = normalizePort(data[index].port);
@@ -106,9 +123,9 @@ function isOpenPort(data) {
                     // });
                     throw error;
                 }
-                let bind = typeof port === 'string'
-                    ? 'Pipe ' + port
-                    : 'Port ' + port;
+                let bind = typeof port === 'string' ?
+                    'Pipe ' + port :
+                    'Port ' + port;
                 switch (error.code) {
                     case 'EACCES':
                         console.error(bind + ' requires elevated privileges');
@@ -128,9 +145,9 @@ function isOpenPort(data) {
 
             server.on('listening', function () {
                 let addr = server.address();
-                let bind = typeof addr === 'string'
-                    ? 'pipe ' + addr
-                    : 'port ' + addr.port;
+                let bind = typeof addr === 'string' ?
+                    'pipe ' + addr :
+                    'port ' + addr.port;
                 // msgArr.push({ port, msg: '端口开启成功，可直接访问：http://localhost:' + bind })
                 console.log('请访问：localhost:' + bind);
                 debug('请访问：localhost:' + bind);
@@ -149,27 +166,44 @@ router.post('/test', (req, res, next) => {
         server.on('listening', function () { // 执行这块代码说明端口未被占用
             server.close() // 关闭服务
             console.log('The port【' + port + '】 is available.') // 控制台输出信息
-            res.json({ result: true, code: 200, state: 1 });
+            res.json({
+                result: true,
+                code: 200,
+                state: 1
+            });
         })
 
         server.on('error', function (err) {
             if (err.code === 'EADDRINUSE') { // 端口已经被使用
                 console.log('The port【' + port + '】 is occupied, please change other port.')
-                res.json({ result: true, code: 500, state: 0 });
+                res.json({
+                    result: true,
+                    code: 500,
+                    state: 0
+                });
             } else {
-                res.json({ result: true, code: 200, state: -1 });
+                res.json({
+                    result: true,
+                    code: 200,
+                    state: -1
+                });
             }
         })
     } else {
-        res.json({ result: false, code: 200, state: -2 });
+        res.json({
+            result: false,
+            code: 200,
+            state: -2
+        });
     }
 });
 
 
 function isNubmer(nubmer) {
-    var re = /^[0-9]+.?[0-9]*/;//判断字符串是否为数字//判断正整数/[1−9]+[0−9]∗]∗/ 
+    var re = /^[0-9]+.?[0-9]*/; //判断字符串是否为数字//判断正整数/[1−9]+[0−9]∗]∗/ 
     return re.test(nubmer)
 }
+
 function normalizePort(val) {
     let port = parseInt(val, 10);
     if (isNaN(port)) {
