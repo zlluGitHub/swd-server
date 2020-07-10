@@ -2,6 +2,8 @@
 const express = require("express");
 const router = express.Router();
 const fs = require("fs");
+let global = require('../../public/javascripts/global.js');
+// console.log(global);
 const exec = require('child_process').exec;
 // 文件存储
 let url = './backups/';
@@ -15,11 +17,14 @@ router.post('/clone', function (req, res, next) {
     if (root && branch && order && gitUrl) {
         let gitName = gitUrl.slice(gitUrl.lastIndexOf("/") + 1, gitUrl.lastIndexOf(".git"))
         function cloneProject() {
+            global.io.emit('message', 'Start creating the contents of files in the folder ...');
             exec(`cd ${url + root} && git clone -b ${branch} ${gitUrl}`, { encoding: 'utf8' }, (error, stdout, stderr) => {
                 if (error) {
+                    global.io.emit('message', error);
                     console.log('错误信息：', error);
                     return res.json({ result: false, code: 500, message: '仓库更新失败！', error: stderr });
                 } else {
+                    global.io.emit('message', 'The file contents in the folder were created successfully!');
                     return res.json({ result: true, code: 200, message: '仓库拉取成功！' });
                 }
             });
@@ -29,12 +34,15 @@ router.post('/clone', function (req, res, next) {
                 //判断文件夹是否存在
                 fs.exists(url + root + '/' + gitName, (exists) => {
                     if (exists) {
+                        global.io.emit('message', 'Project already exists，start deleting this old item ...');
                         // exec(`cd ${url + root} && rd /s /q ${gitName}`, { encoding: 'utf8' }, (error, stdout, stderr) => { // windows
                         exec(`cd ${url + root} && rm -rf ${gitName}`, { encoding: 'utf8' }, (error, stdout, stderr) => {
                             if (error) {
                                 console.log('错误信息：', error);
+                                global.io.emit('message', error);
                                 return res.json({ result: false, code: 500, message: stderr });
                             } else {
+                                global.io.emit('message', 'This old project has been successfully deleted!');
                                 cloneProject();
                             }
                         });
@@ -47,6 +55,7 @@ router.post('/clone', function (req, res, next) {
             };
         });
     } else {
+        global.io.emit('message', 'Clone parameter error!');
         return res.json({ result: false, code: 500, message: '参数错误！' });
     }
 });
@@ -58,15 +67,19 @@ router.post('/pull', function (req, res, next) {
     let gitUrl = body.gitUrl
     if (root && branch) {
         let gitName = gitUrl.slice(gitUrl.lastIndexOf("/") + 1, gitUrl.lastIndexOf(".git"))
+        global.io.emit('message', 'Start pull project, please wait...');
         exec(`cd ${url + root}/${gitName} && git pull`, { encoding: 'utf8' }, (error, stdout, stderr) => {
             if (error) {
                 console.log('错误信息：', error);
+                global.io.emit('message', error);
                 return res.json({ result: false, code: 500, message: '项目pull失败！', error: stderr });
             } else {
+                global.io.emit('message', 'Project pull successful!');
                 return res.json({ result: true, code: 200, message: "项目pull成功!" });
             }
         });
     } else {
+        global.io.emit('message', 'Initialization item parameter error!');
         return res.json({ result: false, code: 500, message: '初始化项目参数错误！' });
     }
 });
@@ -81,15 +94,19 @@ router.post('/init', function (req, res, next) {
     if (root && branch) {
         let gitName = gitUrl.slice(gitUrl.lastIndexOf("/") + 1, gitUrl.lastIndexOf(".git"))
         let npm = order.indexOf('cnpm') > -1 ? 'cnpm' : 'npm';
+        global.io.emit('message', 'It may take a few minutes to initialize the project, please wait a moment ...');
         exec(`cd ${url + root}/${gitName} && ${npm} i`, { encoding: 'utf8' }, (error, stdout, stderr) => {
             if (error) {
                 console.log('错误信息：', error);
+                global.io.emit('message', error);
                 return res.json({ result: false, code: 500, message: '依赖安装失败！', error: stderr });
             } else {
+                global.io.emit('message', 'Project initialization successful!');
                 return res.json({ result: true, code: 200, message: "依赖安装成功!" });
             }
         });
     } else {
+        global.io.emit('message', 'Initialization item parameter error!');
         return res.json({ result: false, code: 500, message: '初始化项目参数错误！' });
     }
 });
@@ -105,11 +122,14 @@ router.post('/build', function (req, res, next) {
         order = order.replace(/cnpm/g, "npm")
         let gitName = gitUrl.slice(gitUrl.lastIndexOf("/") + 1, gitUrl.lastIndexOf(".git"))
         if (body.port && body.port !== "") {
+            global.io.emit('message', 'Start packaging project, please wait a moment ...');
             exec(`cd ${url + root}/${gitName} && ${order}`, { encoding: 'utf8' }, (error, stdout, stderr) => {
                 if (error) {
                     console.log('错误信息：', error);
+                    global.io.emit('message', error);
                     return res.json({ result: false, code: 500, message: '项目打包失败！', error: stderr });
                 } else {
+                    global.io.emit('message', 'Project package successful!');
                     return res.json({ result: true, code: 200, message: "项目打包成功!" });
                 }
             });
@@ -124,12 +144,15 @@ router.post('/build', function (req, res, next) {
                         // res.json({ result: false, code: 500, err: err1 });
 
                         console.log('暂无 vue.config.js 配置文件，开始打包中...');
+                        global.io.emit('message', 'Not yet vue.config.js Configuration file, starting to package ...');
                         exec(`cd ${url + root}/${gitName} && ${order}`, { encoding: 'utf8' }, (error, stdout, stderr) => {
                             if (error) {
                                 console.log('错误信息：', error);
+                                global.io.emit('message', error);
                                 return res.json({ result: false, code: 500, message: '项目打包失败！', error: stderr });
                             } else {
-                                return res.json({ result: true, code: 200, message: "项目打包成功!" });
+                                global.io.emit('message', 'Project package successful!');
+                                return res.json({ result: true, code: 200, message: "Project package successful!" });
                             }
                         });
                     } else {
@@ -139,12 +162,15 @@ router.post('/build', function (req, res, next) {
                                 console.error(err2);
                                 res.json({ result: false, code: 500, err: err2 });
                             } else {
-                                console.log('vue.config.js 修改成功，开始打包中...');
+                                global.io.emit('message','vue.config.js Modification successful, starting to pack ...');
+                                console.log('暂无 vue.config.js 配置文件，开始打包中...');
                                 exec(`cd ${url + root}/${gitName} && ${order}`, { encoding: 'utf8' }, (error, stdout, stderr) => {
                                     if (error) {
                                         console.log('错误信息：', error);
+                                        global.io.emit('message', error);
                                         return res.json({ result: false, code: 500, message: '项目打包失败！', error: stderr });
                                     } else {
+                                        global.io.emit('message', 'Project package successful!');
                                         return res.json({ result: true, code: 200, message: "项目打包成功!" });
                                     }
                                 });
@@ -154,11 +180,14 @@ router.post('/build', function (req, res, next) {
                 });
             } else {
                 console.log('暂无设置端口号，默认打包中...');
+                global.io.emit('message','The port number is not set yet. It is being packed by default ...');
                 exec(`cd ${url + root}/${gitName} && ${order}`, { encoding: 'utf8' }, (error, stdout, stderr) => {
                     if (error) {
                         console.log('错误信息：', error);
+                        global.io.emit('message', error);
                         return res.json({ result: false, code: 500, message: '项目打包失败！', error: stderr });
                     } else {
+                        global.io.emit('message', 'Project package successful!');
                         return res.json({ result: true, code: 200, message: "项目打包成功!" });
                     }
                 });
@@ -166,6 +195,7 @@ router.post('/build', function (req, res, next) {
         }
 
     } else {
+        global.io.emit('message', 'Packing parameter error!');
         return res.json({ result: false, code: 500, message: '打包参数错误！' });
     }
 });

@@ -15,10 +15,12 @@
     "express": "~4.16.1",
     "http-errors": "~1.6.3",
     "http-proxy-middleware": "^1.0.4",
+    "jade": "^1.11.0",
     "mongoose": "^5.7.1",
     "morgan": "~1.9.1",
     "multer": "^1.4.2",
     "nodemailer": "^6.4.2",
-    "request": "^2.88.2"
+    "request": "^2.88.2",
+    "socket.io": "^2.2.0"
   }
 }

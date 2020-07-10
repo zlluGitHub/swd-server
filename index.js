@@ -49,6 +49,7 @@ app.use('/api/deploy/auto', require('./routes/deploy/autoEdition'));
 app.use('/api/deploy/git', require('./routes/deploy/git'));
 
 app.use('/api/service/operation', require('./routes/service/operation'));
+// app.use('/api/service/shell', require('./routes/service/shell'));
 
 // 第三方登录
 app.use('/api/person/oauth', require('./routes/person/oauth'));
@@ -56,6 +57,10 @@ app.use('/api/person/oauth', require('./routes/person/oauth'));
 app.use(function (req, res, next) {
   next(createError(404));
 });
+
+// view engine setup
+app.set('views', path.join(__dirname, 'views'));
+app.set('view engine', 'jade');
 
 // error handler
 app.use(function (err, req, res, next) {

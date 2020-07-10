@@ -3,7 +3,7 @@ const router = express.Router();
 const tools = require("../../public/javascripts/tools");
 const email = require("../../public/javascripts/email");
 const user = require("../../schema/person/user");
-
+let global = require('../../public/javascripts/global.js');
 //获取数据 部分信息
 router.get('/', (req, res, next) => {
     user.find({}, (err, data) => {
@@ -56,8 +56,16 @@ router.post('/login', (req, res, next) => {
                     };
                 };
                 if (mark) {
-                    res.json({ result: true, code: 200, content: info });
+                    let content = {}
+                    if (query.shell !== 'yes') {
+                        content = info
+                        // global.io.emit('message', 'You have successfully logged in，Web command line tool connected successfully!');
+                    } 
+                    res.json({ result: true, code: 200, content });
                 } else {
+                    // if (query.shell == 'yes') {
+                    //     global.io.emit('message', 'Wrong password, please input again!');
+                    // }
                     res.json({ result: false, code: 500, content: '登录失败！' });
                 };
             };
@@ -186,7 +194,7 @@ router.post('/', (req, res, next) => {
                         };
                     });
                 } else {
-                    res.json({ result: true, code: 200, mark: true ,mes:"您已注册，请直接登录！"});
+                    res.json({ result: true, code: 200, mark: true, mes: "您已注册，请直接登录！" });
                     // if (body.type == 'y') {
                     //     user.update({ bid }, { $set: body }, (err, data) => {
                     //         if (err) {

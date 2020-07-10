@@ -5,12 +5,16 @@ let debug = require('debug')('express-nodejs:server');
 let http = require('http');
 const fs = require("fs");
 const path = require('path');
+let ws = require('socket.io'); //引入socket.io
+const exec = require('child_process').exec;
+let global = require('../public/javascripts/global.js');
 /**
  * Get port from environment and store in Express.
  */
 fs.readFile(path.resolve(__dirname, "../config.json"), 'utf8', function (err, data) {
   let config = JSON.parse(data)
-  if (config.process&&!err) {
+  if (config.process && !err) {
+
     let port = normalizePort(process.env.PORT || config.port);
     app.set('port', port);
 
@@ -20,10 +24,48 @@ fs.readFile(path.resolve(__dirname, "../config.json"), 'utf8', function (err, da
 
     let server = http.createServer(app);
 
+    // shell服务
+    // let shell = http.createServer().listen(config.port);
+    //http服务与ws服务相关联, 返回io服务实例 
+    let io = ws(server).of("/news");
+    //监听用户的连接事件
+    io.on('connection', function (socket) {
+      //发生在用户连接io服务器时
+      console.log('socket shell connection successful! Service listening on ' + config.port + ' port.');
+      // io.emit('message', 'Please enter the login password!');
+      // res.json({ result: true, code: 200, mas: '' });
+      //消息发送事件
+      // http.shell_on = socket.on;
+      //  let child_process;
+      socket.on('message', function (obj) {
+        //  console.log(obj);
+        if (obj === 'x') {
+          // 退出注册表进程
+          //  child_process.unref();
+          io.emit('message', "This process has terminated!");
+        } else if (obj === '?') {
+          io.emit('message', "（x）结束当前进程;（?）帮助;");
+        } else {
+          exec(obj, { encoding: 'utf8' }, (error, stdout, stderr) => {
+            if (error) {
+              console.log('错误信息：', error);
+              io.emit('message', `Error: Command failed: ${error}`);
+            } else {
+              io.emit('message', stdout);
+            }
+          });
+        }
+
+      });
+      global.io = io;
+    });
+    // setInterval(() => {
+    //   global.io.emit('message', 'asfakjshfiaus-asfasnf -asf-asfasf asjfashf'); //发送消息给所有客户端（广播）
+    //   }, 1000)  
     /**
      * Listen on provided port, on all network interfaces.
      */
-
+    // http.server = server;
     server.listen(port);
     server.on('error', onError);
     server.on('listening', onListening);

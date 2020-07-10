@@ -32,6 +32,14 @@ const router = express.Router();
 // //     src += cipher.final('utf8');
 // //     return src;
 // // }
+// let global = require('../../public/javascripts/global.js');
+// setInterval(()=>{
+//     console.log(global);
+//     global.io.emit('message', 'asdasd');
+// },5000)
+
+
+ //发送消息给所有客户端（广播）
 // router.post('/post', (req, res, next) => {
 
 //     res.json({ result: false, code: 500,req:req.query });
