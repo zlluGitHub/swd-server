@@ -161,7 +161,7 @@ router.post('/', (req, res, next) => {
     //添加 bid 
     body.bid = body.bid ? body.bid : tools.getUid();
     body.mark = body.mark ? body.mark : 'self';
-    console.log(body);
+    body.date = tools.dateTime();
 
     if ((body.name && body.password && body.type == 'y') || code == body.code) {
         //判断是否已经注册

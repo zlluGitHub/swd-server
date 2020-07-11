@@ -58,10 +58,10 @@ router.post('/github', (req, res, next) => {
                         form: {
                             name: data.login,
                             petname: data.name,
-                            password: data.id,
+                            password: data.email ? data.email : data.id,
                             speech: data.bio,
-                            date: data.created_at,
-                            role: data.type,
+                            // date: data.created_at,
+                            // role: data.type,
                             url: data.avatar_url,
                             web: data.blog,
                             bid: data.node_id,
@@ -165,12 +165,13 @@ router.post('/gitee', (req, res, next) => {
                                 form: {
                                     name: data.login,
                                     petname: data.name,
-                                    password: data.id,
+                                    // password: data.email,
+                                    password: data.email ? data.email : data.id,
                                     url: data.avatar_url,
                                     web: data.blog,
                                     speech: data.bio,
-                                    date: data.created_at,
-                                    role: data.type,
+                                    // date: data.created_at,
+                                    // role: data.type,
                                     git: data.html_url,
                                     email: data.email,
                                     mark: 'oauth',
@@ -182,7 +183,7 @@ router.post('/gitee', (req, res, next) => {
                                     res.json({
                                         code: 200, result: true, data: {
                                             name: data.login,
-                                            password: data.id
+                                            password: data.email
                                         }
                                     });
                                 } else {
@@ -201,6 +202,123 @@ router.post('/gitee', (req, res, next) => {
                     res.json({ msg: '获取用户信息失败！', code: 102, result: false });
                 }
             })
+        } else {
+            // res.end(JSON.stringify({
+            //     msg: '获取用户信息失败',
+            //     status: 101
+            // }));
+            console.log(error);
+            res.json({ msg: '获取用户信息失败！', code: 101, result: false });
+        }
+    }
+    )
+});
+router.post('/gitlab', (req, res, next) => {
+    let githubConfig = {
+        // 客户ID
+        // client_ID: 'f8747cff265598b49d5490eec1b922e362c99a332e2ba5592124af3a98884464',
+        client_ID: '390ffc00b6b1cb0dbcf34951a155d13a38ff2155b6ce711db91ade467a31974e',
+        // 客户密匙
+        // client_Secret: '70a6aa2f40d2f744236457652d57f2c7220735097d5ab61a0c8ffa569f67f218',
+        client_Secret: '5da6c3d5f2c06b60cd13fce3ffb5ca178f6d12e9407e072282468ecb602d5c60',
+        // 获取 access_token
+        access_token_url: 'http://10.0.88.41:8888/oauth/token',
+        // 获取用户信息
+        user_info_url: 'http://10.0.88.41:8888/api/v4/user',
+        // 回调地址
+        redirect_uri: req.headers.origin + '/login'
+    };
+
+    let host = 'http://' + req.headers.host
+    let param = req.body;
+    let code = param.code || '';
+    if (code == '') {
+        res.json({ msg: '请输入正确参数！', code: 103, result: false });
+        return;
+    }
+    console.log('1');
+    request({
+        url: githubConfig.access_token_url,
+        method: 'POST', //请求方式
+        form: {
+            grant_type: 'authorization_code',
+            code: code,
+            client_id: githubConfig.client_ID,
+            client_secret: githubConfig.client_Secret,
+            redirect_uri: githubConfig.redirect_uri
+        }
+    }, (error, response, redata) => {
+        console.log('2', response);
+        // console.log('2',redata);
+        if (!error && response.statusCode == 200) {
+            let body = JSON.parse(redata);
+            console.log(body);
+
+            // request({
+            //     url: githubConfig.access_token_url,
+            //     method: 'POST', //请求方式
+            //     form: {
+            //         grant_type: 'refresh_token',
+            //         refresh_token: body.refresh_token
+            //     },
+            //     headers: { 'User-Agent': 'zlluGitHub' }
+            // }, (error, response, resbody) => {
+            //     if (!error) {
+            //         let data = JSON.parse(resbody);
+            // 获取用户信息
+            request({
+                url: githubConfig.user_info_url,
+                form: {
+                    access_token: body.access_token
+                }
+            }, (error, response, resbody) => {
+                if (!error) {
+
+                    // 将获取到的数据存入数据库
+                    let data = JSON.parse(resbody)
+                    console.log(3, data);
+                    request({
+                        method: 'POST', //请求方式
+                        url: `${host}/api/person/user`,
+                        form: {
+                            name: data.name,
+                            petname: data.username,
+                            password: data.email ? data.email : data.id,
+                            url: data.avatar_url,
+                            web: data.web_url,
+                            // speech: data.bio,
+                            // date: data.created_at,
+                            // role: data.type,
+                            git: data.web_url,
+                            email: data.email,
+                            mark: 'oauth',
+                            type: 'y',
+                            admin: "1"
+                        }
+                    }, (error, response, body) => {
+                        if (!error && response.statusCode == 200) {
+                            res.json({
+                                code: 200, result: true, data: {
+                                    name: data.name,
+                                    password: data.email
+                                }
+                            });
+                        } else {
+                            console.log(error);
+                            res.json({ result: false, code: 500 });
+                        }
+                    });
+                } else {
+                    console.log(error);
+                    res.json({ msg: '获取用户信息失败！', code: 104, result: false });
+                };
+            })
+
+            // } else {
+            //     console.log(error);
+            //     res.json({ msg: '获取用户信息失败！', code: 102, result: false });
+            // }
+            // })
         } else {
             // res.end(JSON.stringify({
             //     msg: '获取用户信息失败',
