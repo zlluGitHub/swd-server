@@ -11,6 +11,10 @@ let history = require('connect-history-api-fallback');
 // app.use(history({ verbose: true, index: '/index.html'}));
 app.use(history());
 
+// 引入日志
+let { log4js, loggerOfConsole } = require('./log.config.js');
+app.use(log4js.connectLogger(loggerOfConsole, { level: 'auto' }));
+
 // 启用 gzip
 let compression = require('compression')
 app.use(compression());
@@ -53,6 +57,11 @@ app.use('/api/service/operation', require('./routes/service/operation'));
 
 // 第三方登录
 app.use('/api/person/oauth', require('./routes/person/oauth'));
+
+// 获取日志
+app.use('/api/logs/run', require('./routes/logs/run'));
+
+
 
 app.use(function (req, res, next) {
   next(createError(404));

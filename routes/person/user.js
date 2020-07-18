@@ -19,6 +19,7 @@ router.get('/', (req, res, next) => {
                     url: item.url
                 }
             });
+            console.log('验证码发送邮件成功！');
             res.json({ result: true, code: 200, data });
         };
     });
@@ -29,12 +30,14 @@ let code = 2342327865; //验证码
 router.post('/login', (req, res, next) => {
     // let query = req.query;
     let query = req.body;
+    // console.log(err);
     code = tools.random(100000, 999999)
     if (query.mark == 0) {
         // 发送邮件
         email.sendMail('18230086651@163.com', '前端自动化部署平台', query.email,
             `【WD】注册验证`,
             `您好，${query.name}！欢迎注册前端自动化部署平台，验证码：${code}。如非本人操作，请忽略。`);
+        console.log('验证码发送邮件成功！');
         res.json({ result: true, code: 200 });
     } else {
         user.find({}, (err, data) => {
@@ -60,12 +63,13 @@ router.post('/login', (req, res, next) => {
                     if (query.shell !== 'yes') {
                         content = info
                         // global.io.emit('message', 'You have successfully logged in，Web command line tool connected successfully!');
-                    } 
+                    }
                     res.json({ result: true, code: 200, content });
                 } else {
                     // if (query.shell == 'yes') {
                     //     global.io.emit('message', 'Wrong password, please input again!');
                     // }
+                    console.log('错误信息：', '登录失败！');
                     res.json({ result: false, code: 500, content: '登录失败！' });
                 };
             };

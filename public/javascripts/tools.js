@@ -32,6 +32,32 @@ function dateTime() {
         + seperator2 + seconds;
     return currentdate;
 };
+// 获取当前时间
+function dateTimeSeconds() {
+    let date = new Date();
+    let seperator1 = "-";
+    let seperator2 = ":";
+
+
+    let hours = date.getHours();
+    if (hours >= 0 && hours <= 9) {
+        hours = "0" + hours;
+    };
+
+    let minutes = date.getMinutes();
+    if (minutes >= 0 && minutes <= 9) {
+        minutes = "0" + minutes;
+    };
+
+    let seconds = date.getSeconds();
+    if (seconds >= 0 && seconds <= 9) {
+        seconds = "0" + seconds;
+    };
+
+    let currentdate = hours + seperator2 + minutes
+        + seperator2 + seconds;
+    return currentdate;
+};
 
 //生成随机ID
 function getUid() {
@@ -92,4 +118,4 @@ function setPage(list, pageNo, pageSize, sort) {
 function random(m, n) {
     return Math.floor(Math.random() * (m - n) + n);
 }
-module.exports = { dateTime, getUid, checkImgType, setPage, random };
+module.exports = { dateTime, getUid, checkImgType, setPage, random, dateTimeSeconds };

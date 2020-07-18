@@ -110,6 +110,7 @@ function isOpenPort(data) {
             let server = app.listen(data[index].port);
             let port = normalizePort(data[index].port);
             server.on('error', function (error) {
+                console.log(error);
                 if (error.syscall !== 'listen') {
                     // 更新状态
                     // component.updateMany({ bid: data[index].bid }, { $set: { portState: '0' } }, (err, result) => {
