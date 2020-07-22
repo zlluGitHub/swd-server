@@ -4,7 +4,7 @@ const readline = require('readline');
 const fs = require('fs');
 const tools = require("../../public/javascripts/tools");
 setInterval(() => {
-    if ('00:00:00' === tools.dateTimeSeconds()) {
+    if ('23:59:59' == tools.dateTimeSeconds()) {
         fs.writeFile('./log/run.log', '', 'utf8', (err) => {
             if (err) {
                 console.log(err);
@@ -13,8 +13,7 @@ setInterval(() => {
             }
         });
     }
-}, 10000);
- console.log(tools.dateTimeSeconds()); 
+}, 1000);
 router.get('/get', async (req, res, next) => {
     let arr = [];
     let query = req.query;
