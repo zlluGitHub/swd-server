@@ -9,6 +9,7 @@ const component = require("../../schema/deploy/edition");
 const net = require('net')
 // const user = require("../../schema/person/user");
 const proxy = require("http-proxy-middleware");
+let history = require('connect-history-api-fallback');
 
 //开机自启所有端口
 component.find({}, (err, data) => {
@@ -90,6 +91,8 @@ function isOpenPort(data) {
     // let msgArr = []
     for (let index = 0; index < data.length; index++) {
         let app = express();
+        // 解决刷新404问题
+        app.use(history());
         // 解决跨域代理
         let pathRewrite = {}
         pathRewrite['/' + data[index].root] = "/";
@@ -103,6 +106,8 @@ function isOpenPort(data) {
                     pathRewrite
                 })
             );
+          
+
         }
 
         if (data[index].idDeployment === 'yes' && data[index].port) {
