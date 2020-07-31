@@ -92,22 +92,24 @@ function isOpenPort(data) {
     for (let index = 0; index < data.length; index++) {
         let app = express();
         // 解决刷新404问题
-        app.use(history());
+        // if (condition) {
+        //     app.use(history());
+        // }
         // 解决跨域代理
         let pathRewrite = {}
-        pathRewrite['/' + data[index].root] = "/";
+        pathRewrite['^/' + data[index].root] = "";
         if (data[index].idDeployment === 'yes' && data[index].target) {
             app.use(`/${data[index].root}/**`,
                 proxy.createProxyMiddleware({
                     // 代理目标地址
                     target: data[index].target,
                     changeOrigin: true,
+                    // ws: true,   
+                    // xfwd:true,
                     // 地址重写
                     pathRewrite
                 })
             );
-          
-
         }
 
         if (data[index].idDeployment === 'yes' && data[index].port) {
