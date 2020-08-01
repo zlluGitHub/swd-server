@@ -1,8 +1,0 @@
-{
-  "database": {
-    "port": "27017",
-    "ip": "10.0.88.46"
-  },
-  "port": 82,
-  "process": false
-}
