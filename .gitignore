@@ -1,12 +1,9 @@
 *node_modules
-
 *backups
-
 *www
 *synccode
 /log
 /routes/logs
-/database
 config34.json
 log.config.js
 
