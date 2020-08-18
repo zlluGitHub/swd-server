@@ -342,11 +342,26 @@ router.post('/config', (req, res, next) => {
             if (data.email && data.email.state) {
                 config.email = data.email.state
             }
-            res.json({ code: 200, result: true, data: config });
+
+            //记录访问量
+            fs.readFile(path.resolve(__dirname, "../../log/webParame.json"), 'utf8', function (err, data) {
+                if (!err && data) {
+                    data = JSON.parse(data);
+                    data.visits = data.visits * 1 + 1
+                    config.visits = data.visits
+                    fs.writeFile(path.resolve(__dirname, "../../log/webParame.json"), JSON.stringify(data), 'utf8', function (error) {
+                        if (error) { console.log(error); }
+                    })
+                } else { console.log(err); }
+                res.json({ code: 200, result: true, data: config });
+            });
+
         } else {
             console.log(err);
             res.json({ msg: err, code: 500, result: false });
         }
     });
+
+
 });
 module.exports = router;

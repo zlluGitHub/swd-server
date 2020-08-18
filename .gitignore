@@ -2,7 +2,7 @@
 /backups
 /www
 synccode
-/log
+/log/*.log
 /routes/logs
 config34.json
 log.config.js
