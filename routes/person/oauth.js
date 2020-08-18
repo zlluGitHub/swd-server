@@ -330,13 +330,13 @@ router.post('/config', (req, res, next) => {
         if (!err && data) {
             data = JSON.parse(data);
             let config = {}
-            if (data.oauth && data.oauth.github.state) {
+            if (data.oauth && data.oauth.github && data.oauth.github.state) {
                 config.github = data.oauth.github.client_ID
             }
-            if (data.oauth && data.oauth.gitee.state) {
+            if (data.oauth && data.oauth.gitee && data.oauth.gitee.state) {
                 config.gitee = data.oauth.gitee.client_ID
             }
-            if (data.oauth && data.oauth.gitlab.state) {
+            if (data.oauth && data.oauth.gitlab && data.oauth.gitlab.state) {
                 config.gitlab = data.oauth.gitlab.client_ID
             }
             if (data.email && data.email.state) {
