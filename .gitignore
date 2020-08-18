@@ -1,7 +1,7 @@
-*node_modules
-*backups
-*www
-*synccode
+/node_modules
+/backups
+/www
+synccode
 /log
 /routes/logs
 config34.json
