@@ -193,7 +193,6 @@ router.post('/', (req, res, next) => {
                 } else {
                     res.json({ result: true, code: 200, mark: true, mes: "您已注册，请直接登录！" });
                 }
-
             };
         });
     } else {
