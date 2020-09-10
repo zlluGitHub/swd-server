@@ -146,28 +146,44 @@ router.post('/build', function (req, res, next) {
                 }
             });
         } else {
-            let str = `module.exports = { publicPath: '/${root}', productionSourceMap: process.env.NODE_ENV === 'production' ? false : true, lintOnSave: false }`
-            fs.writeFile(url + root + "/" + gitName + "/vue.config.js", str, function (err2) {
-                if (err2) {
-                    console.error(err2);
-                    res.json({ result: false, code: 500, err: err2 });
+            // let str = `module.exports = { publicPath: '/${root}', productionSourceMap: process.env.NODE_ENV === 'production' ? false : true, lintOnSave: false }`
+            // fs.writeFile(url + root + "/" + gitName + "/vue.config.js", str, function (err2) {
+            //     if (err2) {
+            //         console.error(err2);
+            //         res.json({ result: false, code: 500, err: err2 });
+            //     } else {
+            //         // global.io.emit('message', 'vue.config.js Modification successful, starting to pack ...');
+            //         global.io.emit('message', '正在打包中，请稍后 ...');
+            //         console.log('正在打包中，请稍后 ...');
+            //         exec(`cd ${url + root}/${gitName} && ${order}`, { encoding: 'utf8' }, (error, stdout, stderr) => {
+            //             if (error) {
+            //                 console.log('错误信息：', error);
+            //                 global.io.emit('message', error);
+            //                 return res.json({ result: false, code: 500, message: '项目打包失败！', error: stderr });
+            //             } else {
+            //                 // global.io.emit('message', 'Project package successful!');
+            //                 global.io.emit('message', '项目打包成功!');
+            //                 return res.json({ result: true, code: 200, message: "项目打包成功!" });
+            //             }
+            //         });
+            //     }
+            // })
+
+            global.io.emit('message', '正在打包中，请稍后 ...');
+            console.log('正在打包中，请稍后 ...');
+            exec(`cd ${url + root}/${gitName} && ${order}`, { encoding: 'utf8' }, (error, stdout, stderr) => {
+                if (error) {
+                    console.log('错误信息：', error);
+                    global.io.emit('message', error);
+                    return res.json({ result: false, code: 500, message: '项目打包失败！', error: stderr });
                 } else {
-                    // global.io.emit('message', 'vue.config.js Modification successful, starting to pack ...');
-                    global.io.emit('message', '正在打包中，请稍后 ...');
-                    console.log('正在打包中，请稍后 ...');
-                    exec(`cd ${url + root}/${gitName} && ${order}`, { encoding: 'utf8' }, (error, stdout, stderr) => {
-                        if (error) {
-                            console.log('错误信息：', error);
-                            global.io.emit('message', error);
-                            return res.json({ result: false, code: 500, message: '项目打包失败！', error: stderr });
-                        } else {
-                            // global.io.emit('message', 'Project package successful!');
-                            global.io.emit('message', '项目打包成功!');
-                            return res.json({ result: true, code: 200, message: "项目打包成功!" });
-                        }
-                    });
+                    // global.io.emit('message', 'Project package successful!');
+                    global.io.emit('message', '项目打包成功!');
+                    return res.json({ result: true, code: 200, message: "项目打包成功!" });
                 }
-            })
+            });
+
+
             // // 看是否有端口号
             // if (body.prot) {
             //     //修改 vue.config.js 配置文件

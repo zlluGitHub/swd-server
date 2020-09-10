@@ -220,7 +220,6 @@ router.post('/', (req, res, next) => {
             }, function (error, response, body) {
                 if (!error && response.statusCode == 200) {
                     console.log('项目部署完成！');
-                    res.json({ result: true, code: 200 });
                 } else {
                     console.log(error);
                     res.json({ result: false, code: 500 });
@@ -244,6 +243,8 @@ router.post('/', (req, res, next) => {
             }
             return arr[0] + "." + arr[1] + "." + arr[2];
         }
+        //响应成功
+        res.json({ result: true, code: 200 });
     } else {
         res.json({ result: false, code: 500 });
     }
