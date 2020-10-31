@@ -3,11 +3,11 @@ const express = require("express");
 const request = require('request');
 const fs = require("fs");
 const router = express.Router();
-
+let timeout = 30 * 60 * 1000; // 设置超时
 router.post('/', (req, res, next) => {
     let resBody = req.body; //Gitea
     let secret = req.get('X-Gitlab-Token'); //gitlab
-    let timeout = 30 * 60 * 1000; // 设置超时
+
     // let query = req.query;
     let url = 'http://' + req.headers.host;
     // let url = 'http://localhost:82'

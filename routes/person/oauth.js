@@ -7,13 +7,13 @@ const request = require('request');
 const fs = require('fs');
 const path = require('path');
 const config = require('../../config.json');
-
+let timeout = 30 * 60 * 1000; // 设置超时
 router.post('/github', (req, res, next) => {
     //读取配置文件
     // fs.readFile(path.resolve(__dirname, "../../config.json"), 'utf8', function (err, data) {
     //     if (!err && data) {
     //         let config = JSON.parse(data);
-    let timeout = 30 * 60 * 1000; // 设置超时
+
     let githubConfig = {
         // 客户ID
         // client_ID: '8b089dc0bdefbbfc7d95',
