@@ -75,7 +75,7 @@ router.post('/', (req, res, next) => {
                     // getCloneProject();
 
                 } else {
-                    console.log('部署配置项有误，请重新填写！');
+                    console.log('自动部署已关闭，请打开后重试！');
                     res.json({ result: false, code: 500 });
                 }
 

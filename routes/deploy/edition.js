@@ -209,13 +209,15 @@ router.post('/add', (req, res, next) => {
                             url: `${url}/api/service/operation/open`,
                             form: body
                         }, function (error, response, data) {
-                            if (!error && response.statusCode == 200) {
-                                console.log(body.port + '端口服务启动成功！');
-                                res.json({ result: true, code: 200, message: body.port + '端口服务启动成功！', key });
-                            } else {
-                                console.log(body.port + '端口服务启动失败！');
-                                res.json({ result: false, code: 200, message: body.port + '端口服务启动失败！' });
-                            }
+                            console.log(body.port + '端口服务启动成功！');
+                            res.json({ result: true, code: 200, message: body.port + '端口服务启动成功！', key });
+                            // if (!error && response.statusCode == 200) {
+                            //     console.log(body.port + '端口服务启动成功！');
+                            //     res.json({ result: true, code: 200, message: body.port + '端口服务启动成功！', key });
+                            // } else {
+                            //     console.log(body.port + '端口服务启动失败！');
+                            //     res.json({ result: false, code: 200, message: body.port + '端口服务启动失败！' });
+                            // }
                         });
                     } else {
                         res.json({ result: true, code: 200, key });

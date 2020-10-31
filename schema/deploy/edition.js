@@ -78,7 +78,7 @@ let editionSchema = new Schema({
         type: String,
         default: ""
     } ,
-    time: { //唯一标识
+    time: { //时间
         type: String,
         default: ""
     },
