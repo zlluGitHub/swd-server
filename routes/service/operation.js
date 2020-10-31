@@ -5,7 +5,7 @@ const router = express.Router();
 // const path = require("path");
 // const tools = require("../../public/javascripts/tools");
 const component = require("../../schema/deploy/edition");
-const exec = require('child_process').exec;
+// const exec = require('child_process').exec;
 const net = require('net')
 // const user = require("../../schema/person/user");
 const proxy = require("http-proxy-middleware");
@@ -126,26 +126,52 @@ function isOpenPort(data) {
     // let msgArr = []
     for (let index = 0; index < data.length; index++) {
         let app = express();
+
         // 解决刷新404问题
         if (data[index].isHistory === 'yes') {
             app.use(history());
-        }
-        // 解决跨域代理
-        let pathRewrite = {}
-        pathRewrite['^/' + data[index].root] = "";
-        if (data[index].idDeployment === 'yes' && data[index].target) {
-            app.use(`/${data[index].root}/**`,
-                proxy.createProxyMiddleware({
-                    // 代理目标地址
-                    target: data[index].target,
-                    changeOrigin: true,
-                    // ws: true,   
-                    // xfwd:true,
-                    // 地址重写
-                    pathRewrite
-                })
-            );
         };
+
+        // 跨域代理
+        if (data[index].idDeployment === 'yes') {
+            // let proxyArr = []
+            let proxyArr = JSON.parse(data[index].proxy);
+            if (proxyArr && proxyArr.length) {
+                // console.log(proxyArr,'proxy');
+                proxyArr.forEach(item => {
+                    let pathRewrite = {}
+                    pathRewrite['^/' + item.rewrite] = "";
+                    app.use(`/${item.rewrite}/**`,
+                        proxy.createProxyMiddleware({
+                            // 代理目标地址
+                            target: item.target,
+                            changeOrigin: true,
+                            // ws: true,   
+                            // xfwd:true,
+                            // 地址重写
+                            pathRewrite
+                        })
+                    );
+                });
+
+            } else if (data[index].target) {
+                let pathRewrite = {}
+                // console.log('dage');
+                pathRewrite['^/' + data[index].root] = "";
+                app.use(`/${data[index].root}/**`,
+                    proxy.createProxyMiddleware({
+                        // 代理目标地址
+                        target: data[index].target,
+                        changeOrigin: true,
+                        // ws: true,   
+                        // xfwd:true,
+                        // 地址重写
+                        pathRewrite
+                    })
+                );
+            };
+        };
+
         if (data[index].idDeployment === 'yes' && data[index].port) {
             app.use(express.static('./www' + data[index].webUrl));
             let server = app.listen(data[index].port);

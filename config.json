@@ -26,6 +26,9 @@
       "state": false,
       "client_ID": "",
       "client_Secret": "",
+      "headers": {
+        "User-Agent": ""
+      },
       "access_token_url": "https://gitee.com/oauth/token",
       "user_info_url": "https://gitee.com/api/v5/user"
     },

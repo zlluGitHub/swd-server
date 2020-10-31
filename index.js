@@ -3,11 +3,11 @@ const express = require('express');
 const path = require('path');
 const fs = require("fs");
 const cookieParser = require('cookie-parser');
-const logger = require('morgan');
+// const logger = require('morgan');
 const app = express();
-
+const config = require('./config.json');
 //解决刷新页面后 页面404
-let history = require('connect-history-api-fallback');
+const history = require('connect-history-api-fallback');
 // app.use(history({ verbose: true, index: '/index.html'}));
 app.use(history());
 
@@ -25,7 +25,7 @@ app.use(bodyParser.json({ limit: '50mb' }));
 app.use(bodyParser.urlencoded({ limit: '50mb', extended: true }));
 
 
-app.use(logger('dev'));
+// app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
@@ -83,31 +83,31 @@ app.use(function (err, req, res, next) {
   res.render('error');
 });
 
-//读取配置文件
-fs.readFile(path.resolve(__dirname, "./config.json"), 'utf8', function (err, data) {
-  if (!err) {
-    let config = JSON.parse(data);
-    // 连接数据库
-    const mongoose = require('mongoose');
-    mongoose.connect(`mongodb://${config.database.ip}:${config.database.port}/SimpleDesign`, { useNewUrlParser: true, useUnifiedTopology: true }, err => {
-      if (err) {
-        console.log('Connection Error:' + err);
-      } else {
-        console.log('数据库连接成功!');
-      }
-    });
-    //创建文件夹
-    let wwwDir = './www';
-    if (!fs.existsSync(wwwDir)) {
-      fs.mkdirSync(wwwDir);
-    }
-    let backupsDir = './backups';
-    if (!fs.existsSync(backupsDir)) {
-      fs.mkdirSync(backupsDir);
-    }
+// //读取配置文件
+// fs.readFile(path.resolve(__dirname, "./config.json"), 'utf8', function (err, data) {
+//   if (!err) {
+//     let config = JSON.parse(data);
+// 连接数据库
+const mongoose = require('mongoose');
+mongoose.connect(`mongodb://${config.database.ip}:${config.database.port}/SimpleDesign`, { useNewUrlParser: true, useUnifiedTopology: true }, err => {
+  if (err) {
+    console.log('Connection Error:' + err);
   } else {
-    console.log(err);
+    console.log('数据库连接成功!');
   }
 });
+//创建文件夹
+let wwwDir = './www';
+if (!fs.existsSync(wwwDir)) {
+  fs.mkdirSync(wwwDir);
+}
+let backupsDir = './backups';
+if (!fs.existsSync(backupsDir)) {
+  fs.mkdirSync(backupsDir);
+}
+//   } else {
+//     console.log(err);
+//   }
+// });
 
 module.exports = app;

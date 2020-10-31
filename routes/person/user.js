@@ -3,7 +3,7 @@ const router = express.Router();
 const tools = require("../../public/javascripts/tools");
 const email = require("../../public/javascripts/email");
 const user = require("../../schema/person/user");
-let global = require('../../public/javascripts/global.js');
+// let global = require('../../public/javascripts/global.js');
 //获取数据 部分信息
 router.get('/', (req, res, next) => {
     user.find({}, (err, data) => {

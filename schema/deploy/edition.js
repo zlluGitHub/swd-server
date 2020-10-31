@@ -107,6 +107,10 @@ let editionSchema = new Schema({
         type: String,
         default: ""
     }, 
+    proxy: { // 代理
+        type: String,
+        default: "[]"
+    }, 
 });
 
 // 输出(导出);
