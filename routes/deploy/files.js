@@ -51,26 +51,6 @@ router.post('/read', (req, res, next) => {
     res.json({ result: true, code: 200, mkdir: components });
 });
 
-router.get('/change', (req, res, next) => {
-    // fs.readFile('./vue.config.js', function (err1, data) {
-    //     if (err1) {
-    //         console.error(err1);
-    //         res.json({ result: false, code: 500, err:err1 });
-    //     } else {
-    //         var str = `module.exports = { publicPath: '/text2222222', productionSourceMap: process.env.NODE_ENV === 'production' ? false : true, lintOnSave: false }`
-    //         fs.writeFile('./vue.config.js', str, function (err2) {
-    //             if (err2) {
-    //                 res.json({ result: false, code: 500, err:err2 });
-    //             } else {
-    //                 console.log('--------------------修改成功');
-    //                 // console.log(person.data);
-                    res.json({ result: true, code: 200 });
-    //             }
-    //         })
-    //     }
-    // })
-});
-
 module.exports = router;
 
 

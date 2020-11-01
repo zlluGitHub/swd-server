@@ -3,17 +3,12 @@ const express = require('express');
 const path = require('path');
 const fs = require("fs");
 const cookieParser = require('cookie-parser');
-// const logger = require('morgan');
 const app = express();
-const config = require('./config.json');
+
 //解决刷新页面后 页面404
 const history = require('connect-history-api-fallback');
-// app.use(history({ verbose: true, index: '/index.html'}));
-app.use(history());
 
-// // 引入日志
-// let { log4js, loggerOfConsole } = require('./log.config.js');
-// app.use(log4js.connectLogger(loggerOfConsole, { level: 'auto' }));
+app.use(history());
 
 // 启用 gzip
 let compression = require('compression')
@@ -58,12 +53,6 @@ app.use('/api/service/operation', require('./routes/service/operation'));
 // 第三方登录
 app.use('/api/person/oauth', require('./routes/person/oauth'));
 
-// // 获取日志
-// app.use('/api/logs/run', require('./routes/logs/run'));
-
-// // 同步代码
-// app.use('/api/synccode', require('./routes/synccode/index'));
-
 app.use(function (req, res, next) {
   next(createError(404));
 });
@@ -83,19 +72,7 @@ app.use(function (err, req, res, next) {
   res.render('error');
 });
 
-// //读取配置文件
-// fs.readFile(path.resolve(__dirname, "./config.json"), 'utf8', function (err, data) {
-//   if (!err) {
-//     let config = JSON.parse(data);
-// 连接数据库
-const mongoose = require('mongoose');
-mongoose.connect(`mongodb://${config.database.ip}:${config.database.port}/SimpleDesign`, { useNewUrlParser: true, useUnifiedTopology: true }, err => {
-  if (err) {
-    console.log('Connection Error:' + err);
-  } else {
-    console.log('数据库连接成功!');
-  }
-});
+
 //创建文件夹
 let wwwDir = './www';
 if (!fs.existsSync(wwwDir)) {
@@ -104,10 +81,6 @@ if (!fs.existsSync(wwwDir)) {
 let backupsDir = './backups';
 if (!fs.existsSync(backupsDir)) {
   fs.mkdirSync(backupsDir);
-}
-//   } else {
-//     console.log(err);
-//   }
-// });
+};
 
 module.exports = app;

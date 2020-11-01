@@ -1,13 +1,7 @@
 const express = require('express');
 const router = express.Router();
-// const debug = require('debug')('express-nodejs:server');
-// const fs = require("fs");
-// const path = require("path");
-// const tools = require("../../public/javascripts/tools");
 const component = require("../../schema/deploy/edition");
-// const exec = require('child_process').exec;
 const net = require('net')
-// const user = require("../../schema/person/user");
 const proxy = require("http-proxy-middleware");
 let history = require('connect-history-api-fallback');
 let global = require('../../public/javascripts/global.js');
@@ -82,17 +76,8 @@ router.post('/history', (req, res, next) => {
                 // 重启项目
                 global.port[body.key].close();
                 isOpenPort([body]);
-                // exec(`pm2 stop swd-deploy && pm2 start swd-deploy`, { encoding: 'utf8' }, (error, stdout, stderr) => {
-                //     if (error) {
-                //         console.log('错误信息：', error);
-                //         global.io.emit('message', error);
-                //         res.json({ result: false, code: 500, message: 'swd-deploy重启失败！', error: stderr });
-                //     } else {
-                //         // global.io.emit('message', 'Project initialization successful!');
                 global.io.emit('message', 'swd-deploy项目重启成功！');
                 res.json({ result: true, code: 200, mas: "History状态更新成功！" });
-                //     }
-                // });
             }
         });
     } else {
@@ -179,16 +164,6 @@ function isOpenPort(data) {
             server.on('error', function (error) {
                 console.log(error);
                 if (error.syscall !== 'listen') {
-                    // 更新状态
-                    // component.updateMany({ bid: data[index].bid }, { $set: { portState: '0' } }, (err, result) => {
-                    //     if (err) {
-                    //         // res.json({ result: false, code: 500 });
-                    //         console.log(data[index].port + '端口数据更新失败！，错误信息：', err);
-                    //     } else {
-                    //         console.log(data[index].port + '端口数据更新成功！');
-                    //         // res.json({ result: true, code: 200 });
-                    //     };
-                    // });
                     throw error;
                 }
                 let bind = typeof port === 'string' ?
@@ -197,14 +172,9 @@ function isOpenPort(data) {
                 switch (error.code) {
                     case 'EACCES':
                         console.error(bind + ' requires elevated privileges');
-                        // process.exit(1);
-                        // msgArr.push({ port, msg: 'requires elevated privileges' })
                         break;
                     case 'EADDRINUSE':
                         console.error(bind + ' is already in use');
-                        // server.close() // 关闭服务
-                        // process.exit(1); //结束进程
-                        // msgArr.push({ port, msg: bind + ' is already in use' })
                         break;
                     default:
                         // throw error;
@@ -218,7 +188,6 @@ function isOpenPort(data) {
                 let bind = typeof addr === 'string' ?
                     'pipe：' + addr :
                     'port：' + addr.port;
-                // msgArr.push({ port, msg: '端口开启成功，可直接访问：http://localhost:' + bind })
                 console.log('The program has successfully run on ' + bind);
             });
         }

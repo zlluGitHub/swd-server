@@ -7,30 +7,9 @@ let timeout = 30 * 60 * 1000; // 设置超时
 router.post('/', (req, res, next) => {
     let resBody = req.body; //Gitea
     let secret = req.get('X-Gitlab-Token'); //gitlab
-
-    // let query = req.query;
     let url = 'http://' + req.headers.host;
-    // let url = 'http://localhost:82'
     if (secret) {
         resBody.secret = secret;
-        // // 附加功能 piflow扩展
-        // if (secret === '52b9be44219c11720ffb1c1293f1c1445899') {
-        //     request({
-        //         method: 'POST', //请求方式
-        //         url: `${url}/api/synccode/github`,
-        //         form: {
-        //             commit: resBody.commits[0].message
-        //         }
-        //     }, function (error, response, data) {
-        //         if (!error && response.statusCode == 200) {
-        //             console.log('gitlab->github代码同步中...');
-        //             res.json({ result: true, code: 200 });
-        //         } else {
-        //             console.log('gitlab->github代码同步失败！');
-        //             res.json({ result: false, code: 500 });
-        //         }
-        //     });
-        // }
     }
     if (req.query.key) {
         resBody.secret = req.query.key; //github
@@ -47,8 +26,6 @@ router.post('/', (req, res, next) => {
             method: 'GET',
             timeout: timeout,
             qs: {
-                // projectName: 'git测试项目',
-                // projectName: resBody.secret,
                 key: resBody.secret,
                 select: 'one',
                 mode: '1'
@@ -59,10 +36,6 @@ router.post('/', (req, res, next) => {
                 if (data.data.key && data.data.isAuto === 'yes') {
                     objData = data.data;
                     objData.version = data.version;
-                    // 删除文件
-                    // fs.unlink('./backups/' + objData.root + '/package.json', (errq) => {
-                    // if (errq) {} else {}
-                    // 复制文件
                     fs.copyFile('./backups/' + objData.root + '/' + resBody.repository.name + '/package.json', './backups/' + objData.root + '/package.json', function (err) {
                         if (err) {
                             console.log(err)
@@ -71,8 +44,6 @@ router.post('/', (req, res, next) => {
                             getPullProject();
                         }
                     })
-                    // });
-                    // getCloneProject();
 
                 } else {
                     console.log('自动部署已关闭，请打开后重试！');

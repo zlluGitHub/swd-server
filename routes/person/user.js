@@ -3,7 +3,6 @@ const router = express.Router();
 const tools = require("../../public/javascripts/tools");
 const email = require("../../public/javascripts/email");
 const user = require("../../schema/person/user");
-// let global = require('../../public/javascripts/global.js');
 //获取数据 部分信息
 router.get('/', (req, res, next) => {
     user.find({}, (err, data) => {
@@ -28,9 +27,7 @@ router.get('/', (req, res, next) => {
 //验证 数据 登录
 let code = 2342327865; //验证码
 router.post('/login', (req, res, next) => {
-    // let query = req.query;
     let query = req.body;
-    // console.log(err);
     code = tools.random(100000, 999999)
     if (query.mark == 0) {
         // 发送邮件
@@ -60,13 +57,9 @@ router.post('/login', (req, res, next) => {
                     let content = {}
                     if (query.shell !== 'yes') {
                         content = info
-                        // global.io.emit('message', 'You have successfully logged in，Web command line tool connected successfully!');
                     }
                     res.json({ result: true, code: 200, content });
                 } else {
-                    // if (query.shell == 'yes') {
-                    //     global.io.emit('message', 'Wrong password, please input again!');
-                    // }
                     console.log('错误信息：', '登录失败！');
                     res.json({ result: false, code: 500, content: '登录失败！' });
                 };
@@ -79,7 +72,6 @@ router.post('/login', (req, res, next) => {
 
 // 找回密码
 router.post('/reset', (req, res, next) => {
-    // let query = req.query;
     let query = req.body;
     if (query.email) {
 

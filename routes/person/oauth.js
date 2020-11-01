@@ -9,23 +9,14 @@ const path = require('path');
 const config = require('../../config.json');
 let timeout = 30 * 60 * 1000; // 设置超时
 router.post('/github', (req, res, next) => {
-    //读取配置文件
-    // fs.readFile(path.resolve(__dirname, "../../config.json"), 'utf8', function (err, data) {
-    //     if (!err && data) {
-    //         let config = JSON.parse(data);
-
     let githubConfig = {
         // 客户ID
-        // client_ID: '8b089dc0bdefbbfc7d95',
         client_ID: config.oauth.github.client_ID,
         // 客户密匙
-        // client_Secret: '61f6952cb122165e69f19f448491054500249715',
         client_Secret: config.oauth.github.client_Secret,
         // 获取 access_token
-        // eg: https://github.com/login/oauth/access_token?client_id=7***************6&client_secret=4***************f&code=9dbc60118572de060db4&redirect_uri=http://manage.hgdqdev.cn/#/login
         access_token_url: config.oauth.github.access_token_url,
         // 获取用户信息
-        // eg: https://api.github.com/user?access_token=86664b010dbb841a86d4ecc38dfeb8ac673b9430&scope=&token_type=bearer
         user_info_url: config.oauth.github.user_info_url + '?',
         // 回调地址
         redirect_uri: req.headers.origin + '/login'
@@ -56,8 +47,6 @@ router.post('/github', (req, res, next) => {
             }, (error, response, resbody) => {
                 if (!error) {
                     let data = JSON.parse(resbody);
-                    // 将获取到的数据存入数据库
-
                     request({
                         method: 'POST', //请求方式
                         timeout: timeout,
@@ -67,8 +56,6 @@ router.post('/github', (req, res, next) => {
                             petname: data.name,
                             password: data.email ? data.email : data.id,
                             speech: data.bio,
-                            // date: data.created_at,
-                            // role: data.type,
                             url: data.avatar_url,
                             web: data.blog,
                             bid: data.node_id,
@@ -99,25 +86,13 @@ router.post('/github', (req, res, next) => {
             res.json({ msg: '获取用户信息失败！', code: 101, result: false });
         }
     })
-    //     } else {
-    //         err = err ? err : '配置信息读取错误！'
-    //         console.log(err);
-    //         res.json({ msg: err, code: 500, result: false });
-    //     }
-    // });
 });
 
 router.post('/gitee', (req, res, next) => {
-    // fs.readFile(path.resolve(__dirname, "../../config.json"), 'utf8', function (err, data) {
-    //     if (!err) {
-    //         let config = JSON.parse(data);
-
     let githubConfig = {
         // 客户ID
-        // client_ID: 'f8747cff265598b49d5490eec1b922e362c99a332e2ba5592124af3a98884464',
         client_ID: config.oauth.gitee.client_ID,
         // 客户密匙
-        // client_Secret: '70a6aa2f40d2f744236457652d57f2c7220735097d5ab61a0c8ffa569f67f218',
         client_Secret: config.oauth.gitee.client_Secret,
         // 获取 access_token
         access_token_url: config.oauth.gitee.access_token_url,
@@ -217,31 +192,16 @@ router.post('/gitee', (req, res, next) => {
                 }
             })
         } else {
-            // res.end(JSON.stringify({
-            //     msg: '获取用户信息失败',
-            //     status: 101
-            // }));
             console.log(error);
             res.json({ msg: '获取用户信息失败！', code: 101, result: false });
         }
     })
-    //     } else {
-    //         err = err ? err : '配置信息读取错误！'
-    //         console.log(err);
-    //         res.json({ msg: err, code: 500, result: false });
-    //     }
-    // });
 });
 router.post('/gitlab', (req, res, next) => {
-    // fs.readFile(path.resolve(__dirname, "../../config.json"), 'utf8', function (err, data) {
-    //     if (!err) {
-    //         let config = JSON.parse(data);
     let githubConfig = {
         // 客户ID
-        // client_ID: 'f8747cff265598b49d5490eec1b922e362c99a332e2ba5592124af3a98884464',
         client_ID: config.oauth.gitlab.client_ID,
         // 客户密匙
-        // client_Secret: '70a6aa2f40d2f744236457652d57f2c7220735097d5ab61a0c8ffa569f67f218',
         client_Secret: config.oauth.gitlab.client_Secret,
         // 获取 access_token
         access_token_url: config.oauth.gitlab.access_token_url,
@@ -294,9 +254,6 @@ router.post('/gitlab', (req, res, next) => {
                             password: data.email ? data.email : data.id,
                             url: data.avatar_url,
                             web: data.web_url,
-                            // speech: data.bio,
-                            // date: data.created_at,
-                            // role: data.type,
                             git: data.web_url,
                             email: data.email,
                             mark: 'oauth',
@@ -326,21 +283,12 @@ router.post('/gitlab', (req, res, next) => {
             res.json({ msg: '获取用户信息失败！', code: 101, result: false });
         }
     })
-    //     } else {
-    //         err = err ? err : '配置信息读取错误！'
-    //         console.log(err);
-    //         res.json({ msg: err, code: 500, result: false });
-    //     }
-    // });
 });
 
 
 // 获取第三方登录信息
 router.post('/config', (req, res, next) => {
     //读取配置文件
-    // fs.readFile(path.resolve(__dirname, "../../config.json"), 'utf8', function (err, data) {
-    //     if (!err && data) {
-    //         data = JSON.parse(data);
     let configObj = {}
     if (config.oauth && config.oauth.github && config.oauth.github.state) {
         configObj.github = config.oauth.github.client_ID
@@ -367,13 +315,5 @@ router.post('/config', (req, res, next) => {
         } else { console.log(err); }
         res.json({ code: 200, result: true, data: configObj });
     });
-
-    //     } else {
-    //         console.log(err);
-    //         res.json({ msg: err, code: 500, result: false });
-    //     }
-    // });
-
-
 });
 module.exports = router;
