@@ -120,23 +120,24 @@ function isOpenPort(data) {
         // 跨域代理
         if (data[index].idDeployment === 'yes') {
             // let proxyArr = []
-            let proxyArr = JSON.parse(data[index].proxy);
+            let proxyArr = data[index].proxy ? JSON.parse(data[index].proxy) : false;
             if (proxyArr && proxyArr.length) {
-                // console.log(proxyArr,'proxy');
-                proxyArr.forEach(item => {
-                    let pathRewrite = {}
-                    pathRewrite['^/' + item.rewrite] = "";
-                    app.use(`/${item.rewrite}/**`,
-                        proxy.createProxyMiddleware({
-                            // 代理目标地址
-                            target: item.target,
-                            changeOrigin: true,
-                            // ws: true,   
-                            // xfwd:true,
-                            // 地址重写
-                            pathRewrite
-                        })
-                    );
+                proxyArr.forEach((item, i) => {
+                    if (proxyArr[i].rewrite && proxyArr[i].target) {
+                        let pathRewrite = {}
+                        pathRewrite['^/' + item.rewrite] = "";
+                        app.use(`/${item.rewrite}/**`,
+                            proxy.createProxyMiddleware({
+                                // 代理目标地址
+                                target: item.target,
+                                changeOrigin: true,
+                                // ws: true,   
+                                // xfwd:true,
+                                // 地址重写
+                                pathRewrite
+                            })
+                        );
+                    }
                 });
 
             } else if (data[index].target) {
