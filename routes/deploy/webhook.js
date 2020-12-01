@@ -183,6 +183,7 @@ router.post('/', (req, res, next) => {
                     versionRoot: "./" + objData.root + "/" + version,
                     remark: gitData.message,
                     dist: objData.dist,
+                    proxy: objData.proxy,
                     gitUrl: objData.gitUrl, //git 地址
                     branch: objData.branch, //git 分支
                     order: objData.order, //部署命令
